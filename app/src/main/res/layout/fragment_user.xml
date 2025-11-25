@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="欢迎来到旅游助手"
+            android:text="欢迎来到旅途循迹"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_gravity="center"
