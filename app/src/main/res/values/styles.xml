@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- Base application theme -->
+    <style name="Theme.TravelApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryVariant">#388E3C</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#4CAF50</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">#388E3C</item>
+    </style>
+
+    <!-- 发布弹窗从底部滑入动画 -->
+    <style name="BottomSlideAnimation">
+        <item name="android:windowEnterAnimation">@anim/bottom_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/bottom_slide_down</item>
+    </style>
+
+    <!-- BottomSheet 专用主题：透明背景 + 圆角 + 无dim遮罩 -->
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <!-- 背景透明（关键！让底层地图可见） -->
+        <item name="android:background">@android:color/transparent</item>
+
+        <!-- 去除默认的半透明遮罩（dim），让地图不被变暗 -->
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- 圆角（配合你的 bottom_sheet_background.xml 使用） -->
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <!-- 可选：更细致的 BottomSheet 样式 -->
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_background</item>  <!-- 你的圆角drawable -->
+    </style>
+
+</resources>

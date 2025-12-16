@@ -1,6 +1,7 @@
 package edu.travels.travelapp.ui.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.widget.ImageView;
 
 public class UserFragment extends Fragment {
 
@@ -62,10 +64,22 @@ public class UserFragment extends Fragment {
         apiService = RetrofitClient.getInstance().create(ApiService.class);
         sp = requireActivity().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
 
-        checkLoginStatus();
+        checkLoginStatus(view);
 
         btnLogin.setOnClickListener(v -> loginOrRegister());
         btnLogout.setOnClickListener(v -> logout());
+
+        // 编辑资料
+        view.findViewById(R.id.btn_edit_profile).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), EditProfileActivity.class));
+        });
+
+
+        view.findViewById(R.id.btn_my_posts).setOnClickListener(v -> {
+            Toast.makeText(getContext(), "开发中，敬请期待！", Toast.LENGTH_SHORT).show();
+        });
+
+        checkLoginStatus(view);
 
         return view;
     }
@@ -172,13 +186,20 @@ public class UserFragment extends Fragment {
         Toast.makeText(getContext(), "登录成功！欢迎 " + nickname, Toast.LENGTH_LONG).show();
     }
 
-    private void checkLoginStatus() {
+    private void checkLoginStatus(View view) {
         String token = sp.getString(KEY_TOKEN, null);
         String nickname = sp.getString(KEY_NICKNAME, null);
         if (token != null && nickname != null) {
             tvNickname.setText(nickname);
             layoutLogin.setVisibility(View.GONE);
             layoutProfile.setVisibility(View.VISIBLE);
+
+            // 显示头像
+            String avatarUri = sp.getString("avatar_uri", "");
+            if (!avatarUri.isEmpty()) {
+                ImageView ivAvatar = view.findViewById(R.id.iv_avatar);
+                ivAvatar.setImageURI(android.net.Uri.parse(avatarUri));
+            }
         }
     }
 

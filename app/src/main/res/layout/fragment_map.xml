@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="MissingClass">
+    android:layout_height="match_parent">
 
-    <!-- 高德地图控件 -->
+    <!-- 高德地图 -->
     <com.amap.api.maps.MapView
         android:id="@+id/map_view"
         android:layout_width="0dp"
@@ -17,30 +14,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 顶部筛选器容器 -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- 搜索类别菜单按钮（右上角 FAB） -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_search_menu"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="#CCFFFFFF"
-        app:layout_constraintTop_toTopOf="parent">
+        android:src="@drawable/ic_menu_search"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/teal_700"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
-        <Button
-            android:id="@+id/btn_toilet"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="找公厕"
-            android:layout_marginEnd="8dp"/>
-
-        <Button
-            android:id="@+id/btn_parking"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="找停车场"
-            android:layout_marginStart="8dp"/>
-    </LinearLayout>
+    <!-- 定位按钮（右下角） -->
+    <ImageButton
+        android:id="@+id/btn_location"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/circle_blue"
+        android:src="@android:drawable/ic_menu_mylocation"
+        app:tint="@android:color/white"
+        android:elevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="70dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,6 +53,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     // 高德地图 (3D地图 + 搜索)
     implementation("com.amap.api:3dmap:9.8.2")

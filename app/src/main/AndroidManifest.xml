@@ -11,13 +11,25 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <queries>
+        <!-- 高德地图 -->
+        <package android:name="com.autonavi.minimap" />
+
+        <!-- 如果你还会用 Intent Scheme -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="androidamap" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Material3.DayNight.NoActionBar"
         android:usesCleartextTraffic="true"
-        tools:ignore="MissingClass">
+        tools:ignore="MissingClass"
+        android:allowNativeHeapPointerTagging="false">
 
         <!-- 高德 Key -->
         <meta-data
@@ -32,5 +44,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.user.EditProfileActivity"
+            android:exported="false" />
     </application>
 </manifest>
