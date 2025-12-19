@@ -1,24 +1,23 @@
 package org.example.travel.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Web配置：注册拦截器、配置静态资源等
+ * Web配置：主要解决跨域问题
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private JwtInterceptor jwtInterceptor;
-
+    // 只添加 CORS 配置，暂时不配置拦截器
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        // 注册JWT拦截器，拦截所有/api/**接口（除了登录、注册）
-        registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/**")  // 拦截所有接口
-                .excludePathPatterns("/auth/login", "/auth/register");  // 放行登录、注册接口
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")  // 匹配所有路径
+                .allowedOriginPatterns("*")  // 允许所有来源
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);  // 预检请求缓存时间
     }
 }

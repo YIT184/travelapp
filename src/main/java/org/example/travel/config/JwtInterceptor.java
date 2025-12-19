@@ -29,7 +29,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             throw new BusinessException(401, "请先登录");
         }
 
-        // 2. 提取token（去掉"Bearer "前缀）
+        // 2. 提取token
         String token = authHeader.substring(7);
 
         try {

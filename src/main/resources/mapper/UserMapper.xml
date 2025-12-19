@@ -4,24 +4,58 @@
 
     <!-- 根据用户ID查询用户 -->
     <select id="selectById" resultType="org.example.travel.model.entity.User">
-        SELECT * FROM user WHERE user_id = #{userId}
+        SELECT
+            user_id,
+            nickname,
+            avatar_url,
+            phone,
+            password,
+            signature,
+            create_time
+        FROM user
+        WHERE user_id = #{userId}
     </select>
 
     <!-- 根据手机号查询用户 -->
     <select id="selectByPhone" resultType="org.example.travel.model.entity.User">
-        SELECT * FROM user WHERE phone = #{phone}
+        SELECT
+            user_id,
+            nickname,
+            avatar_url,
+            phone,
+            password,
+            signature,
+            create_time
+        FROM user
+        WHERE phone = #{phone}
     </select>
 
     <!-- 插入用户 -->
     <insert id="insert" parameterType="org.example.travel.model.entity.User">
-        INSERT INTO user (user_id, nickname, avatar_url, phone, password, signature, create_time)
-        VALUES (#{userId}, #{nickname}, #{avatarUrl}, #{phone}, #{password}, #{signature}, #{createTime})
+        INSERT INTO user (
+            user_id,
+            nickname,
+            avatar_url,
+            phone,
+            password,
+            signature,
+            create_time
+        ) VALUES (
+                     #{userId},
+                     #{nickname},
+                     #{avatarUrl},
+                     #{phone},
+                     #{password},
+                     #{signature},
+                     #{createTime}
+                 )
     </insert>
 
-    <!-- 更新用户 -->
+    <!-- 更新用户信息 -->
     <update id="update" parameterType="org.example.travel.model.entity.User">
         UPDATE user
-        SET nickname = #{nickname},
+        SET
+            nickname = #{nickname},
             avatar_url = #{avatarUrl},
             phone = #{phone},
             password = #{password},
