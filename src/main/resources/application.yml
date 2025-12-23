@@ -24,15 +24,20 @@ server:
   servlet:
     context-path: /api
 
-# ???OSS??
+# 阿里云OSS配置（修改后）
 aliyun:
   oss:
     endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-id: LTAI5txxxxxxxxxxxxxxx
-    access-key-secret: 8xxxxxxxxxxxxxxxxxxxxxxxxxxx
-    bucket-name: travel-trace-2024
+    accessKeyId: LTAI5txxxxxxxxxxxxxxx  # 改：access-key-id → accessKeyId
+    accessKeySecret: 8xxxxxxxxxxxxxxxxxxxxxxxxxxx  # 改：access-key-secret → accessKeySecret
+    bucketName: travel-trace-2024  # 可选：同步改bucket-name → bucketName，保持风格统一
 
 # JWT??
 jwt:
   secret: TravelTraceSystem2024@JWT_SECRET_KEY_MUST_BE_LONG_ENOUGH_FOR_HMAC_SHA256
   expire: 604800000
+# 新增高德地图API配置（poiService需要用到）
+amap:
+  key: test-amap-key-123456  # 替换成你自己的高德地图Web服务API密钥
+  # 可选：添加其他高德地图相关配置（如逆地理编码接口地址）
+  geocode-url: https://restapi.amap.com/v3/geocode/regeo
