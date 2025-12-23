@@ -29,10 +29,12 @@ public class ResultVO<T> {
     public static <T> ResultVO<T> success() {
         return new ResultVO<>(200, "操作成功", null);
     }
+
     //自定义消息 + 自定义数据
     public static <T> ResultVO<T> success(String msg, T data) {
         return new ResultVO<>(200, msg, data); // 复用私有构造函数，简洁高效
     }
+
     // 失败响应
     public static <T> ResultVO<T> error(int code, String msg) {
         return new ResultVO<>(code, msg, null);
@@ -50,5 +52,4 @@ public class ResultVO<T> {
     public static <T> ResultVO<T> serverError() {
         return new ResultVO<>(500, "服务器内部错误", null);
     }
-
 }
