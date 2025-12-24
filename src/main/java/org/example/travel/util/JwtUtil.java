@@ -3,14 +3,17 @@ package org.example.travel.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.example.travel.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * JWT工具类：生成token、验证token、解析token中的用户信息
+ * 统一的JWT工具类（替换原JwtTokenUtil，兼容原有JwtUtil）
  */
 @Component
 public class JwtUtil {
@@ -21,42 +24,72 @@ public class JwtUtil {
     @Value("${jwt.expire}")
     private long expire;    // token有效期（毫秒）
 
-    // 生成token（基于用户手机号）
-    public String generateToken(String phone) {
-        // 密钥处理：确保密钥长度足够（JWT要求HS256密钥至少256位）
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
+    // 生成密钥（适配新版JJWT）
+    private SecretKey getSecretKey() {
+        if (secret.length() < 32) {
+            throw new IllegalArgumentException("JWT密钥长度必须≥32位");
+        }
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
+    // 生成Token（存储user_id，兼容原有逻辑）
+    public String generateToken(String userId) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + expire);
         return Jwts.builder()
-                .setSubject(phone)  // token中存储的核心信息（用户手机号）
-                .setIssuedAt(new Date())  // 签发时间
-                .setExpiration(new Date(System.currentTimeMillis() + expire))  // 过期时间
-                .signWith(key)  // 签名
+                .setSubject(userId) // 存储数据库真实user_id
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(getSecretKey())
                 .compact();
     }
 
-    // 验证token有效性（是否过期、签名是否正确）
+    // 兼容原有逻辑：生成Token（存储手机号）
+    public String generateTokenByPhone(String phone) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + expire);
+        return Jwts.builder()
+                .setSubject(phone) // 存储手机号（适配旧接口）
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(getSecretKey())
+                .compact();
+    }
+
+    // 解析Token获取user_id（核心：上传接口用）
+    public String extractUserId(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException("Token无效或已过期");
+        }
+    }
+
+    // 解析Token获取手机号（适配旧接口：修改用户资料用）
+    public String extractPhone(String token) {
+        return extractUserId(token); // 旧Token存的是手机号，直接复用解析逻辑
+    }
+
+    // 验证token有效性
     public boolean validateToken(String token, String phone) {
         String extractedPhone = extractPhone(token);
         return extractedPhone.equals(phone) && !isTokenExpired(token);
     }
 
-    // 从token中解析出用户手机号
-    public String extractPhone(String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    // 解析token中的所有声明（Claims）
-    private Claims extractClaims(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
     // 检查token是否过期
     private boolean isTokenExpired(String token) {
-        return extractClaims(token).getExpiration().before(new Date());
+        return Jwts.parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
     }
 }

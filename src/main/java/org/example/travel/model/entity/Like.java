@@ -1,6 +1,7 @@
 package org.example.travel.model.entity;
 
 import lombok.Data;
+
 import java.util.Date;
 
 @Data

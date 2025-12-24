@@ -1,30 +1,27 @@
 package org.example.travel.mapper;
 
+import org.apache.ibatis.annotations.*;
 import org.example.travel.model.entity.TravelImage;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+
 import java.util.List;
 
 public interface ImageMapper {
-    // 新增图片
-    @Insert("INSERT INTO travel_image (image_id, user_id, image_url, description, gps_lat, gps_lng, location_name, like_count, comment_count, create_time) " +
-            "VALUES (#{imageId}, #{userId}, #{imageUrl}, #{description}, #{gpsLat}, #{gpsLng}, #{locationName}, #{likeCount}, #{commentCount}, #{createTime})")
-    void insert(TravelImage travelImage);
 
-    // 按ID查询图片
+    @Insert("INSERT INTO travel_image (image_id, user_id, image_url, description, gps_lat, gps_lng, location_name, create_time) " +
+            "VALUES (#{imageId}, #{userId}, #{imageUrl}, #{description}, #{gpsLat}, #{gpsLng}, #{locationName}, NOW())")
+    void insert(TravelImage image);
+
     @Select("SELECT * FROM travel_image WHERE image_id = #{imageId}")
     TravelImage selectById(String imageId);
 
-    // 按创建时间倒序查询所有图片
-    @Select("SELECT * FROM travel_image ORDER BY create_time DESC")
-    List<TravelImage> selectAllByCreateTimeDesc();
+    @Update("UPDATE travel_image SET description = #{description}, gps_lat = #{gpsLat}, " +
+            "gps_lng = #{gpsLng}, location_name = #{locationName} WHERE image_id = #{imageId}")
+    void updateById(TravelImage image);
 
-    // 点赞数+1
-    @Update("UPDATE travel_image SET like_count = like_count + 1 WHERE image_id = #{imageId}")
-    void incrementLikeCount(String imageId);
+    @Delete("DELETE FROM travel_image WHERE image_id = #{imageId}")
+    void deleteById(String imageId);
+    // 新增分页查询方法
+    @Select("SELECT * FROM travel_image ORDER BY create_time DESC LIMIT #{offset}, #{size}")
+    List<TravelImage> selectImageList(@Param("offset") int offset, @Param("size") int size);
 
-    // 点赞数-1
-    @Update("UPDATE travel_image SET like_count = like_count - 1 WHERE image_id = #{imageId} AND like_count > 0")
-    void decrementLikeCount(String imageId);
 }

@@ -2,21 +2,18 @@ package org.example.travel.service;
 
 import org.example.travel.model.entity.TravelImage;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface ImageService {
-    // 上传图片到OSS
+    // 已有的方法...
     String uploadToOss(MultipartFile file);
+    void saveImage(TravelImage image);
+    TravelImage getImageById(String imageId);
+    void updateImage(TravelImage image);
+    void deleteImage(String imageId);
+    void deleteFromOss(String imageUrl);
 
-    // 保存图片信息到数据库
-    void saveImage(TravelImage travelImage);
-
-    // 查询图片列表
-    List<TravelImage> getImageList();
-
-    // 点赞数+1
-    void incrementLikeCount(String imageId);
-
-    // 点赞数-1
-    void decrementLikeCount(String imageId);
+    // 新增方法
+    List<TravelImage> getImageList(Integer page, Integer size);
 }

@@ -1,5 +1,7 @@
 package org.example.travel.service.impl;
 
+import java.util.Arrays;  // 添加此导入语句
+import java.util.List;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.PutObjectRequest;
@@ -22,34 +24,32 @@ import java.util.UUID;
  * 图片服务层：负责图片上传OSS、数据入库、列表查询、点赞数更新等逻辑
  * 关键修改：1. 类名改为ImageServiceImpl  2. 实现ImageService接口
  */
-@Service // 保留@Service注解
+/**
+ * 图片服务实现类
+ */
+@Service
 public class ImageServiceImpl implements ImageService {
 
-    // 阿里云OSS配置（从application.yml读取）
     @Value("${aliyun.oss.endpoint}")
     private String endpoint;
+
     @Value("${aliyun.oss.accessKeyId}")
     private String accessKeyId;
+
     @Value("${aliyun.oss.accessKeySecret}")
     private String accessKeySecret;
+
     @Value("${aliyun.oss.bucketName}")
     private String bucketName;
-
-    // 允许上传的图片格式
-    private static final String[] ALLOWED_IMAGE_FORMATS = {"jpg", "jpeg", "png", "gif", "webp"};
-    // 图片最大大小（10MB）
-    private static final long MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 
     @Resource
     private ImageMapper imageMapper;
 
     /**
      * 上传图片到阿里云OSS
-
      */
     @Override
     public String uploadToOss(MultipartFile file) {
-        // 原有逻辑完全保留，无需修改
         validateImageFile(file);
         String originalFilename = file.getOriginalFilename();
         String fileSuffix = FilenameUtils.getExtension(originalFilename);
@@ -72,81 +72,86 @@ public class ImageServiceImpl implements ImageService {
 
     /**
      * 保存图片信息到数据库
-
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void saveImage(TravelImage travelImage) {
-        // 原有逻辑完全保留
-        travelImage.setLikeCount(travelImage.getLikeCount() == null ? 0 : travelImage.getLikeCount());
-        travelImage.setCommentCount(travelImage.getCommentCount() == null ? 0 : travelImage.getCommentCount());
-        travelImage.setCreateTime(new Date());
-        imageMapper.insert(travelImage);
+    public void saveImage(TravelImage image) {
+        imageMapper.insert(image);
     }
 
     /**
-     * 分页查询图片列表（按创建时间倒序）
+     * 根据ID查询图片
      */
     @Override
-    public List<TravelImage> getImageList() {
-        // 原有逻辑完全保留
-        return imageMapper.selectAllByCreateTimeDesc();
+    public TravelImage getImageById(String imageId) {
+        return imageMapper.selectById(imageId);
     }
 
     /**
-     * 图片点赞数+1
-     * ✅ 新增@Override注解
+     * 更新图片信息
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void incrementLikeCount(String imageId) {
-        // 原有逻辑完全保留
-        TravelImage image = imageMapper.selectById(imageId);
-        if (image == null) {
-            throw new BusinessException("图片不存在，点赞失败");
-        }
-        imageMapper.incrementLikeCount(imageId);
+    public void updateImage(TravelImage image) {
+        imageMapper.updateById(image);
     }
 
     /**
-     * 图片点赞数-1（防止负数）
-     * ✅ 新增@Override注解
+     * 从数据库删除图片记录
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void decrementLikeCount(String imageId) {
-        // 原有逻辑完全保留
-        TravelImage image = imageMapper.selectById(imageId);
-        if (image == null) {
-            throw new BusinessException("图片不存在，取消点赞失败");
-        }
-        if (image.getLikeCount() > 0) {
-            imageMapper.decrementLikeCount(imageId);
-        }
+    public void deleteImage(String imageId) {
+        imageMapper.deleteById(imageId);
     }
 
     /**
-     * 图片文件合法性校验（格式+大小）
+     * 从OSS删除图片文件
      */
-    private void validateImageFile(MultipartFile file) {
-        // 原有逻辑完全保留
-        if (file.isEmpty()) {
-            throw new BusinessException("上传图片不能为空");
-        }
-        if (file.getSize() > MAX_IMAGE_SIZE) {
-            throw new BusinessException("图片大小不能超过10MB");
-        }
-        String originalFilename = file.getOriginalFilename();
-        String fileSuffix = FilenameUtils.getExtension(originalFilename).toLowerCase();
-        boolean isAllowed = false;
-        for (String format : ALLOWED_IMAGE_FORMATS) {
-            if (format.equals(fileSuffix)) {
-                isAllowed = true;
-                break;
+    @Override
+    public void deleteFromOss(String imageUrl) {
+        // 解析URL获取文件名
+        String fileName = imageUrl.substring(imageUrl.indexOf(bucketName + "." + endpoint + "/") + (bucketName + "." + endpoint + "/").length());
+
+        OSS ossClient = null;
+        try {
+            ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+            if (ossClient.doesObjectExist(bucketName, fileName)) {
+                ossClient.deleteObject(bucketName, fileName);
+            }
+        } catch (Exception e) {
+            throw new BusinessException("从OSS删除图片失败：" + e.getMessage());
+        } finally {
+            if (ossClient != null) {
+                ossClient.shutdown();
             }
         }
-        if (!isAllowed) {
-            throw new BusinessException("仅支持jpg、jpeg、png、gif、webp格式图片");
+    }
+
+    /**
+     * 验证图片文件
+     */
+    private void validateImageFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new BusinessException("上传的图片为空");
         }
+
+        // 验证文件大小，这里限制10MB
+        long fileSize = file.getSize();
+        if (fileSize > 10 * 1024 * 1024) {
+            throw new BusinessException("图片大小不能超过10MB");
+        }
+
+        // 验证文件类型
+        String originalFilename = file.getOriginalFilename();
+        String fileSuffix = FilenameUtils.getExtension(originalFilename).toLowerCase();
+        List<String> allowedSuffix = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp");
+        if (!allowedSuffix.contains(fileSuffix)) {
+            throw new BusinessException("不支持的图片格式，仅支持jpg、jpeg、png、gif、bmp");
+        }
+    }
+
+    @Override
+    public List<TravelImage> getImageList(Integer page, Integer size) {
+        // 计算分页偏移量
+        int offset = (page - 1) * size;
+        return imageMapper.selectImageList(offset, size);
     }
 }

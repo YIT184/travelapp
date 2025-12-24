@@ -7,8 +7,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   # ??? mybatis ????? mybatis-plus?
 mybatis:
@@ -27,14 +27,14 @@ server:
 # 阿里云OSS配置（修改后）
 aliyun:
   oss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    accessKeyId: LTAI5txxxxxxxxxxxxxxx  # 改：access-key-id → accessKeyId
-    accessKeySecret: 8xxxxxxxxxxxxxxxxxxxxxxxxxxx  # 改：access-key-secret → accessKeySecret
-    bucketName: travel-trace-2024  # 可选：同步改bucket-name → bucketName，保持风格统一
+    endpoint: oss-cn-chengdu.aliyuncs.com  # 西南1（成都）地域固定endpoint
+    accessKeyId:   # 你的真实AccessKeyId
+    accessKeySecret:  # 你的真实AccessKeySecret
+    bucketName: travel-trace-2024
 
 # JWT??
 jwt:
-  secret: TravelTraceSystem2024@JWT_SECRET_KEY_MUST_BE_LONG_ENOUGH_FOR_HMAC_SHA256
+  secret: TravelTraceSystem2024JWTSECRETKEYMUSTBELONGENOUGHFORHMACSHA256
   expire: 604800000
 # 新增高德地图API配置（poiService需要用到）
 amap:
