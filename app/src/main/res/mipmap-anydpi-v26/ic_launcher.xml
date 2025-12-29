@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 浅蓝色天空背景 -->
     <background android:drawable="@drawable/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+    <!-- 热气球前景图标 -->
+    <!-- 如果您有热气球图片，请将下面的 drawable 改为您的图片资源 -->
+    <foreground android:drawable="@drawable/ic_launcher" />
+    <monochrome android:drawable="@drawable/ic_launcher" />
+</adaptive-icon>
+    <foreground android:drawable="@drawable/ic_launcher" />
+    <monochrome android:drawable="@drawable/ic_launcher" />
 </adaptive-icon>

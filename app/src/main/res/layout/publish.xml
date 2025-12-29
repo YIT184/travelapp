@@ -4,76 +4,243 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="16dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="6dp"
+    app:cardElevation="4dp"
     app:cardBackgroundColor="#FFFFFF">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:fillViewport="true">
 
-        <!-- 图片区域 -->
-        <ImageView
-            android:id="@+id/iv_post_image"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:background="#E0E0E0"/>
-
-        <!-- 内容区域 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <!-- 标题输入框 -->
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- 顶部标题栏 -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="输入景点标题">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_title"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:paddingBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="发布新内容"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"/>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_user_avatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/default_avatar"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/tv_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="当前用户"
+                    android:textSize="14sp"
+                    android:textColor="#757575"/>
+            </LinearLayout>
+
+            <!-- 分割线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginHorizontal="16dp"/>
+
+            <!-- 图片选择区域 -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_margin="16dp"
+                android:background="#F5F5F5"
+                android:id="@+id/layout_image_container">
+
+                <ImageView
+                    android:id="@+id/iv_selected_image"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="选择的图片"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
-            <!-- 地点输入框 -->
-            <com.google.android.material.textfield.TextInputLayout
+                <!-- 图片选择提示 -->
+                <LinearLayout
+                    android:id="@+id/layout_image_placeholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="24dp">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:src="@android:drawable/ic_menu_gallery"
+                        android:tint="#9E9E9E"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="点击选择图片"
+                        android:textSize="16sp"
+                        android:textColor="#757575"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="支持 JPG、PNG 格式"
+                        android:textSize="12sp"
+                        android:textColor="#9E9E9E"/>
+                </LinearLayout>
+
+                <!-- 选择图片按钮（在未选择图片时显示） -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_select_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="选择图片"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="12dp"
+                    app:backgroundTint="#4CAF50"
+                    app:cornerRadius="24dp"
+                    android:elevation="2dp"
+                    android:visibility="visible"/>
+            </RelativeLayout>
+
+            <!-- 内容输入区域 -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="输入地点（如：故宫）">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_location"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="16dp">
+
+                <!-- 标题输入框 -->
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:hint="景点标题 *"
+                    android:layout_marginTop="8dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxStrokeColor="#E0E0E0"
+                    app:boxStrokeWidth="1dp"
+                    app:hintTextColor="#9E9E9E"
+                    app:startIconDrawable="@android:drawable/ic_menu_edit"
+                    app:startIconTint="#4CAF50">
 
-            <!-- 作者（自动显示当前用户） -->
-            <TextView
-                android:id="@+id/tv_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="作者：加载中..."
-                android:textSize="14sp"
-                android:textColor="#666666"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#212121"
+                        android:maxLines="1"
+                        android:inputType="textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- 发布按钮 -->
-            <Button
-                android:id="@+id/btn_submit_post"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="20dp"
-                android:text="发布到社区"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:backgroundTint="#4CAF50"
-                android:textColor="#FFFFFF"/>
+                <!-- 地点输入框 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="地点位置"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxStrokeColor="#E0E0E0"
+                    app:boxStrokeWidth="1dp"
+                    app:hintTextColor="#9E9E9E"
+                    app:startIconDrawable="@android:drawable/ic_menu_mylocation"
+                    app:startIconTint="#2196F3">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#212121"
+                        android:maxLines="1"
+                        android:inputType="textCapSentences"
+                        android:hint="例如：北京故宫"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 描述输入框 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="详细描述"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxStrokeColor="#E0E0E0"
+                    app:boxStrokeWidth="1dp"
+                    app:hintTextColor="#9E9E9E"
+                    app:startIconDrawable="@android:drawable/ic_menu_recent_history"
+                    app:startIconTint="#FF9800">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:gravity="top|start"
+                        android:paddingVertical="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#212121"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:lines="5"
+                        android:maxLines="10"
+                        android:scrollbars="vertical"
+                        android:hint="分享你的旅行见闻..."/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 发布按钮 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="24dp"
+                    android:text="发布到社区"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    app:backgroundTint="#4CAF50"
+                    app:cornerRadius="12dp"
+                    android:elevation="2dp"
+                    app:icon="@android:drawable/ic_menu_upload"
+                    app:iconGravity="textStart"
+                    app:iconTint="#FFFFFF"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.cardview.widget.CardView>

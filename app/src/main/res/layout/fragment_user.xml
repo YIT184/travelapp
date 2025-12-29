@@ -90,7 +90,20 @@
                 android:text="加载中..."
                 android:textSize="24sp"
                 android:textStyle="bold"/>
+
+            <!-- 个签 -->
+            <TextView
+                android:id="@+id/tv_signature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="这个人很懒，没有留下个性签名"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                tools:text="探索世界，记录美好~" />
         </LinearLayout>
+
 
         <!-- 功能按钮区 -->
         <LinearLayout

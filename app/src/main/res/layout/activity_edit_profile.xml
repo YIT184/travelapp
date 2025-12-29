@@ -76,6 +76,20 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- 个性签名输入 -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="个性签名（可选）">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_signature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="3"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- 保存按钮 -->
             <Button
                 android:id="@+id/btn_save"

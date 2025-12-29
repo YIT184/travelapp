@@ -16,12 +16,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MapsInitializer.updatePrivacyShow(this, true, true);
-        MapsInitializer.updatePrivacyAgree(this, true);
-        ServiceSettings.updatePrivacyShow(this, true, true);
-        ServiceSettings.updatePrivacyAgree(this, true);
-
         super.onCreate(savedInstanceState);
+        
+        // 高德地图隐私合规声明（必须在super.onCreate之后）
+        try {
+            MapsInitializer.updatePrivacyShow(this, true, true);
+            MapsInitializer.updatePrivacyAgree(this, true);
+            ServiceSettings.updatePrivacyShow(this, true, true);
+            ServiceSettings.updatePrivacyAgree(this, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         setContentView(R.layout.activity_main);
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
