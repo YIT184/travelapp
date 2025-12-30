@@ -18,19 +18,18 @@ import java.util.concurrent.TimeUnit;
 public class RetrofitClient {
     private static final String BASE_URL = "http://10.147.174.178:8080/";
     
-    // 调试模式，设置为true时显示详细日志
+    //调试模式，设置为true时显示详细日志
     private static final boolean DEBUG_MODE = false;
 
     private static Retrofit retrofit;
 
     public static Retrofit getInstance() {
-        // 强制重新创建实例（用于调试，确保BASE_URL生效）
-        // 生产环境可以恢复 if (retrofit == null) 检查
+        //强制重新创建实例
         if (retrofit == null || DEBUG_MODE) {
             if (DEBUG_MODE && retrofit != null) {
                 Log.d("RetrofitClient", "重新创建Retrofit实例，BASE_URL: " + BASE_URL);
             }
-            retrofit = null; // 清除旧实例
+            retrofit = null; //清除旧实例
             OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                     .connectTimeout(20, TimeUnit.SECONDS)
                     .readTimeout(20, TimeUnit.SECONDS)
@@ -51,7 +50,7 @@ public class RetrofitClient {
 
                         Request.Builder builder = original.newBuilder();
                         
-                        // 根据接口路径选择不同的token传递方式
+                        //根据接口路径选择不同的token传递方式
                         String url = original.url().toString();
                         if (url.contains("/auth/update-user-info") || url.contains("/auth/upload-avatar") || url.contains("/auth/user-info")) {
                             // 使用Authorization头
@@ -73,7 +72,7 @@ public class RetrofitClient {
 
                         Request request = builder.build();
                         
-                        // 记录请求信息
+                        //记录请求信息
                         if (DEBUG_MODE) {
                             Log.d("RetrofitInterceptor", "请求URL: " + request.url());
                             Log.d("RetrofitInterceptor", "请求方法: " + request.method());
@@ -103,7 +102,7 @@ public class RetrofitClient {
                         return chain.proceed(request);
                     });
 
-            // 添加响应日志拦截器
+            //添加响应日志拦截器
             if (DEBUG_MODE) {
                 clientBuilder.addInterceptor(chain -> {
                     Request request = chain.request();
@@ -116,7 +115,7 @@ public class RetrofitClient {
                     
                     Log.d("RetrofitInterceptor", "收到响应: " + response.code() + " " + response.message() + " (耗时: " + (endTime - startTime)/1000000 + "ms)");
                     
-                    // 记录响应体内容预览（使用peekBody不会消耗响应流）
+                    //记录响应体内容预览（使用peekBody不会消耗响应流）
                     try {
                         okhttp3.ResponseBody responseBody = response.body();
                         Log.d("RetrofitInterceptor", "响应体检查 - responseBody == null: " + (responseBody == null));

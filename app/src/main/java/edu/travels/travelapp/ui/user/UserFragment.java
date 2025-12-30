@@ -81,12 +81,12 @@ public class UserFragment extends Fragment {
         btnLogin.setOnClickListener(v -> loginOrRegister());
         btnLogout.setOnClickListener(v -> logout());
 
-        // 编辑资料
+        //编辑资料
         view.findViewById(R.id.btn_edit_profile).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), EditProfileActivity.class));
         });
         
-        // 文章管理
+        //文章管理
         view.findViewById(R.id.btn_my_posts).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), edu.travels.travelapp.ui.user.myposts.MyPostsActivity.class));
         });
@@ -124,25 +124,25 @@ public class UserFragment extends Fragment {
                             String nickname = data.optString("nickname", "游客" + phone.substring(7));
                             String userId = data.optString("userId", "");
 
-                            // 1. 先保存 Token (非常重要，后续请求需要它)
+                            //先保存 Token
                             SharedPreferences.Editor editor = sp.edit();
                             editor.putString("token", token);
                             editor.apply();
 
-                            // 2. 尝试解析头像（签名从 getUserInfo 接口获取）
+                            //尝试解析头像（签名从 getUserInfo 接口获取）
                             String loginAvatar = data.optString("avatarUrl", null);
                             if (loginAvatar == null) loginAvatar = data.optString("avatar", null); // 防御性代码
 
-                            // ✅ 关键修改：个性签名总是从 getUserInfo 接口获取，而不是登录接口
-                            // 如果登录接口返回了头像，可以使用；但签名必须从 getUserInfo 获取
+                            //个性签名总是从 getUserInfo 接口获取，而不是登录接口
+                            //如果登录接口返回了头像，可以使用；但签名必须从 getUserInfo 获取
                             Log.d("UserFragment", "========== 准备调用 fetchUserInfoAndSave ==========");
                             Log.d("UserFragment", "登录返回的头像: " + loginAvatar);
                             if (loginAvatar != null && !loginAvatar.isEmpty()) {
-                                // 有头像，但签名需要从 getUserInfo 获取
+                                //有头像，但签名需要从 getUserInfo 获取
                                 Log.d("UserFragment", "✅ 登录接口返回了头像，签名将从 getUserInfo 获取");
                                 fetchUserInfoAndSave(token, nickname, userId, null, loginAvatar);
                             } else {
-                                // 没有头像，也需要从 getUserInfo 获取完整信息
+                                //没有头像，也需要从 getUserInfo 获取完整信息
                                 Log.d("UserFragment", "✅ 登录接口数据不全，从 getUserInfo 获取完整信息");
                                 fetchUserInfoAndSave(token, nickname, userId, null, null);
                             }
@@ -150,9 +150,9 @@ public class UserFragment extends Fragment {
                         }
                     }
                 } catch (Exception e) {
-                    // 解析失败或登录失败，都尝试注册
+                    //解析失败或登录失败，都尝试注册
                 }
-                // 登录失败 → 自动注册
+                //登录失败 → 自动注册
                 autoRegister(phone, password);
             }
 
@@ -172,7 +172,7 @@ public class UserFragment extends Fragment {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "注册成功，正在登录...", Toast.LENGTH_SHORT).show();
-                    // 注册成功后延迟一下再登录（避免太快）
+                    //注册成功后延迟一下再登录（避免太快）
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         UserLoginDTO loginDTO = new UserLoginDTO(phone, password);
                         apiService.login(loginDTO).enqueue(new Callback<ResponseBody>() {
@@ -188,25 +188,25 @@ public class UserFragment extends Fragment {
                                             String nick = data.optString("nickname", defaultNickname);
                                             String userId = data.optString("userId", "");
 
-                                            // 1. 先保存 Token
+                                            //先保存 Token
                                             SharedPreferences.Editor editor = sp.edit();
                                             editor.putString("token", token);
                                             editor.apply();
 
-                                            // 2. 尝试解析头像（签名从 getUserInfo 接口获取）
+                                            //尝试解析头像（签名从 getUserInfo 接口获取）
                                             String loginAvatar = data.optString("avatarUrl", null);
                                             if (loginAvatar == null) loginAvatar = data.optString("avatar", null); // 防御性代码
 
-                                            // ✅ 关键修改：个性签名总是从 getUserInfo 接口获取，而不是登录接口
+                                            //个性签名总是从 getUserInfo 接口获取，而不是登录接口
                                             Log.d("UserFragment", "========== 准备调用 fetchUserInfoAndSave (注册后) ==========");
                                             Log.d("UserFragment", "注册后登录返回的头像: " + loginAvatar);
                                             if (loginAvatar != null && !loginAvatar.isEmpty()) {
-                                                // 有头像，但签名需要从 getUserInfo 获取
-                                                Log.d("UserFragment", "✅ 注册后登录返回了头像，签名将从 getUserInfo 获取");
+                                                //有头像，但签名需要从 getUserInfo 获取
+                                                Log.d("UserFragment", "注册后登录返回了头像，签名将从 getUserInfo 获取");
                                                 fetchUserInfoAndSave(token, nick, userId, null, loginAvatar);
                                             } else {
-                                                // 没有头像，也需要从 getUserInfo 获取完整信息
-                                                Log.d("UserFragment", "✅ 注册后登录数据不全，从 getUserInfo 获取完整信息");
+                                                //没有头像，也需要从 getUserInfo 获取完整信息
+                                                Log.d("UserFragment", "注册后登录数据不全，从 getUserInfo 获取完整信息");
                                                 fetchUserInfoAndSave(token, nick, userId, null, null);
                                             }
                                         }
@@ -245,7 +245,7 @@ public class UserFragment extends Fragment {
         editor.putString("token", token);
         editor.putString("nickname", nickname);
         
-        // ✅ 关键修复：只有当传入的签名不为空时，才覆盖本地签名；否则保留本地已有的签名
+        //只有当传入的签名不为空时，才覆盖本地签名；否则保留本地已有的签名
         String finalSignature = signature;
         if (signature != null && !signature.isEmpty()) {
             editor.putString("signature", signature);
@@ -261,7 +261,7 @@ public class UserFragment extends Fragment {
             }
         }
         
-        // ✅ 关键修复：只有当传入的头像不为空时，才覆盖本地头像；否则保留本地已有的头像
+        //只有当传入的头像不为空时，才覆盖本地头像；否则保留本地已有的头像
         String finalAvatar = avatarUrl;
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
             editor.putString("avatar_url", avatarUrl);
@@ -282,23 +282,23 @@ public class UserFragment extends Fragment {
         }
         editor.apply();
 
-        // 更新UI显示
+        //更新UI显示
         tvNickname.setText(nickname);
         
-        // 显示签名（使用最终确定的值）
+        //显示签名（使用最终确定的值）
         if (!TextUtils.isEmpty(finalSignature)) {
             tvSignature.setText(finalSignature);
         } else {
             tvSignature.setText("这个人很懒，没有留下个性签名");
         }
         
-        // 显示头像（使用最终确定的值）
+        //显示头像（使用最终确定的值）
         ImageView ivAvatar = getView() != null ? getView().findViewById(R.id.iv_avatar) : null;
         if (ivAvatar != null) {
             if (!TextUtils.isEmpty(finalAvatar)) {
                 Glide.with(this).load(finalAvatar).into(ivAvatar);
             } else {
-                // 如果没有头像URL，显示默认头像
+                //如果没有头像URL，显示默认头像
                 ivAvatar.setImageResource(R.drawable.default_avatar);
             }
         }
@@ -352,7 +352,7 @@ public class UserFragment extends Fragment {
      * @param currentAvatar 登录接口返回的头像（如果有值则使用，否则从 getUserInfo 获取）
      */
     private void fetchUserInfoAndSave(String token, String nickname, String userId, String currentSign, String currentAvatar) {
-        // 从本地读取已有的签名和头像（作为备用）
+        //从本地读取已有的签名和头像（作为备用）
         String localSignature = sp.getString(KEY_SIGNATURE, "");
         String localAvatar = sp.getString(KEY_AVATAR_URL, "");
         
@@ -368,14 +368,14 @@ public class UserFragment extends Fragment {
                 Log.d("UserFragment", "响应是否成功: " + response.isSuccessful());
                 Log.d("UserFragment", "响应体是否为null: " + (response.body() == null));
                 
-                // 默认使用传入的值（防止接口返回null）
+                //默认使用传入的值（防止接口返回null）
                 String finalNick = nickname;
-                // 优先使用登录接口返回的头像，如果没有则使用本地已有的头像
+                //优先使用登录接口返回的头像，如果没有则使用本地已有的头像
                 String finalAvatar = currentAvatar != null && !currentAvatar.isEmpty() 
                     ? currentAvatar 
                     : (localAvatar != null && !localAvatar.isEmpty() ? localAvatar : "");
-                // ✅ 关键修改：个性签名优先从 getUserInfo 接口获取，而不是登录接口
-                // 初始值使用本地已有的签名（作为备用）
+                //个性签名优先从 getUserInfo 接口获取，而不是登录接口
+                //初始值使用本地已有的签名（作为备用）
                 String finalSign = localSignature != null && !localSignature.isEmpty() ? localSignature : "";
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -384,7 +384,7 @@ public class UserFragment extends Fragment {
                     Log.d("UserFragment", "ResultVO msg: " + resultVO.getMsg());
                     Log.d("UserFragment", "ResultVO data是否为null: " + (resultVO.getData() == null));
                     
-                    // ✅ 关键修复：检查业务状态码，只有 code == 200 才处理数据
+                    //检查业务状态码，只有 code == 200 才处理数据
                     if (resultVO.getCode() == 200 && resultVO.getData() != null) {
                         UserUpdateDTO userInfo = resultVO.getData();
                         Log.d("UserFragment", "========== UserUpdateDTO 所有字段 ==========");
@@ -403,24 +403,24 @@ public class UserFragment extends Fragment {
                         if (userInfo.getAvatarUrl() != null && !userInfo.getAvatarUrl().isEmpty()) 
                             finalAvatar = userInfo.getAvatarUrl();
                         
-                        // ✅ 关键修改：个性签名优先从 getUserInfo 接口获取
+                        //个性签名优先从 getUserInfo 接口获取
                         if (userInfo.getSignature() != null && !userInfo.getSignature().isEmpty()) {
                             finalSign = userInfo.getSignature();
-                            Log.d("UserFragment", "✅ 从 getUserInfo 接口获取到签名: " + finalSign);
+                            Log.d("UserFragment", "从 getUserInfo 接口获取到签名: " + finalSign);
                         } else {
-                            // 如果接口返回的签名为空，使用本地已有的签名（不覆盖）
-                            Log.w("UserFragment", "⚠️ getUserInfo 接口返回的签名为空或null，使用本地签名: " + finalSign);
+                            //如果接口返回的签名为空，使用本地已有的签名（不覆盖）
+                            Log.w("UserFragment", "getUserInfo 接口返回的签名为空或null，使用本地签名: " + finalSign);
                         }
                     } else {
-                        // ✅ 关键修复：业务状态码不是 200 或 data 为 null，视为失败，保留本地签名
-                        Log.w("UserFragment", "⚠️ getUserInfo 接口返回业务错误，code: " + resultVO.getCode() + ", msg: " + resultVO.getMsg());
-                        Log.w("UserFragment", "⚠️ 将保留本地已有的签名，不覆盖");
+                        //业务状态码不是 200 或 data 为 null，视为失败，保留本地签名
+                        Log.w("UserFragment", "getUserInfo 接口返回业务错误，code: " + resultVO.getCode() + ", msg: " + resultVO.getMsg());
+                        Log.w("UserFragment", "将保留本地已有的签名，不覆盖");
                         // finalSign 已经初始化为本地签名，不需要修改
                     }
                     
                     Log.d("UserFragment", "最终保存的数据 - 昵称: " + finalNick + ", 头像: " + finalAvatar + ", 签名: " + finalSign);
                 } else {
-                    Log.w("UserFragment", "⚠️ 获取用户信息接口返回异常");
+                    Log.w("UserFragment", "获取用户信息接口返回异常");
                     if (response.body() == null) {
                         Log.w("UserFragment", "响应体为 null");
                     } else {
@@ -439,11 +439,11 @@ public class UserFragment extends Fragment {
                 Log.e("UserFragment", "错误信息: " + t.getMessage());
                 Log.e("UserFragment", "错误堆栈: ", t);
                 
-                // ✅ 关键修复：网络失败时，使用本地缓存的数据（不依赖登录接口返回的签名）
+                //网络失败时，使用本地缓存的数据（不依赖登录接口返回的签名）
                 String safeAvatar = currentAvatar != null && !currentAvatar.isEmpty() 
                     ? currentAvatar 
                     : (localAvatar != null && !localAvatar.isEmpty() ? localAvatar : "");
-                // 签名优先使用本地已有的签名
+                //签名优先使用本地已有的签名
                 String safeSign = localSignature != null && !localSignature.isEmpty() ? localSignature : "";
                 
                 Log.d("UserFragment", "getUserInfo 接口失败，使用本地缓存数据，头像: " + safeAvatar + ", 签名: " + safeSign);
@@ -453,7 +453,7 @@ public class UserFragment extends Fragment {
     }
 
     private void logout() {
-        sp.edit().clear().apply();  // 彻底清除所有用户信息
+        sp.edit().clear().apply();  //彻底清除所有用户信息
         layoutLogin.setVisibility(View.VISIBLE);
         layoutProfile.setVisibility(View.GONE);
         etPhone.setText("");

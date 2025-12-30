@@ -22,7 +22,7 @@ import retrofit2.http.Query;
 import java.util.List;
 
 public interface ApiService {
-    // 用户认证相关
+    //用户认证相关
     @POST("/api/auth/login")
     Call<ResponseBody> login(@Body UserLoginDTO dto);
 
@@ -32,11 +32,11 @@ public interface ApiService {
     @PUT("/api/auth/update-user-info")
     Call<ResponseBody> updateUserInfo(@Body UserUpdateDTO dto);
 
-    // 获取用户信息
+    //获取用户信息
     @GET("/api/auth/user-info")
     Call<ResultVO<UserUpdateDTO>> getUserInfo();
 
-    // 图片上传 - 返回ResultVO<String>，data为图片ID
+    //图片上传
     @Multipart
     @POST("/api/image/upload")
     Call<ResultVO<String>> uploadImage(
@@ -47,14 +47,14 @@ public interface ApiService {
             @Part("locationName") okhttp3.RequestBody locationName
     );
 
-    // 获取图片列表（分页）- 后端返回ResultVO包装的List数组
+    //获取图片列表
     @GET("/api/image/list")
     Call<ResultVO<List<ImageItemDTO>>> getImageList(
             @Query("page") Integer page,
             @Query("size") Integer size
     );
 
-    // 更新图片信息（描述、位置）
+    //更新图片信息（描述、位置）
     @FormUrlEncoded
     @PUT("/api/image")
     Call<ResultVO<String>> updateImage(
@@ -63,7 +63,7 @@ public interface ApiService {
             @Field("locationName") String locationName
     );
 
-    // 删除图片
+    //删除图片
     @DELETE("/api/image")
     Call<ResultVO<String>> deleteImage(
             @Query("imageId") String imageId

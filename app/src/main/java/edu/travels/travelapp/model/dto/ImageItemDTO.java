@@ -43,7 +43,6 @@ public class ImageItemDTO implements Serializable {
     private Double gpsLng;
 
 
-    // 兼容旧字段（可选，保留以防万一）
     @SerializedName("nickname")
     private String nickname;
 

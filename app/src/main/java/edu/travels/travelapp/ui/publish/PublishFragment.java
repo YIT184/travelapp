@@ -83,12 +83,12 @@ public class PublishFragment extends DialogFragment {
                 if (getActivity() != null && result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
                     selectedImageUri = result.getData().getData();
                     if (selectedImageUri != null && ivSelectedImage != null) {
-                        // 显示选中的图片
+                        //显示选中的图片
                         Glide.with(this)
                                 .load(selectedImageUri)
                                 .into(ivSelectedImage);
                         
-                        // 隐藏占位符和选择按钮
+                        //隐藏占位符和选择按钮
                         if (layoutImagePlaceholder != null) {
                             layoutImagePlaceholder.setVisibility(View.GONE);
                         }
@@ -96,7 +96,7 @@ public class PublishFragment extends DialogFragment {
                             btnSelectImage.setVisibility(View.GONE);
                         }
                         
-                        // 将图片复制到缓存文件
+                        //将图片复制到缓存文件
                         selectedImageFile = copyUriToCache(selectedImageUri);
                     }
                 }
@@ -105,7 +105,7 @@ public class PublishFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // 初始化高德地图隐私合规
+        //初始化高德地图隐私合规
         try {
             MapsInitializer.updatePrivacyShow(requireContext(), true, true);
             MapsInitializer.updatePrivacyAgree(requireContext(), true);
@@ -117,7 +117,7 @@ public class PublishFragment extends DialogFragment {
 
         initViews(view);
         setupListeners();
-        initLocation(); // 初始化定位
+        initLocation(); //初始化定位
 
         return view;
     }
@@ -133,7 +133,7 @@ public class PublishFragment extends DialogFragment {
         btnSubmit = view.findViewById(R.id.btn_submit);
         layoutImagePlaceholder = view.findViewById(R.id.layout_image_placeholder);
         
-        // 设置作者信息 - 从SharedPreferences获取当前用户的昵称和头像
+        //设置作者信息 - 从SharedPreferences获取当前用户的昵称和头像
         loadCurrentUserInfo();
     }
     
@@ -146,7 +146,7 @@ public class PublishFragment extends DialogFragment {
         try {
             android.content.SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE);
             
-            // 获取昵称
+            //获取昵称
             String nickname = prefs.getString("nickname", null);
             if (nickname != null && !nickname.trim().isEmpty()) {
                 tvAuthor.setText(nickname);
@@ -154,7 +154,7 @@ public class PublishFragment extends DialogFragment {
                 tvAuthor.setText("当前用户");
             }
             
-            // 获取头像
+            //获取头像
             String avatarUrl = prefs.getString("avatar_url", null);
             if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
                 Glide.with(this)
@@ -164,7 +164,7 @@ public class PublishFragment extends DialogFragment {
                         .circleCrop()
                         .into(ivUserAvatar);
             } else {
-                // 使用默认头像
+                //使用默认头像
                 Glide.with(this)
                         .load(R.drawable.default_avatar)
                         .circleCrop()
@@ -183,9 +183,9 @@ public class PublishFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        // 每次显示时重新加载用户信息，确保显示最新的头像和昵称
+        //每次显示时重新加载用户信息，确保显示最新的头像和昵称
         loadCurrentUserInfo();
-        // 自动获取定位
+        //自动获取定位
         if (!isLocationRequested) {
             requestLocation();
             isLocationRequested = true;
@@ -195,7 +195,7 @@ public class PublishFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
-        // 停止定位以节省资源
+        //停止定位以节省资源
         if (locationClient != null) {
             locationClient.stopLocation();
         }
@@ -204,7 +204,7 @@ public class PublishFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // 释放定位资源
+        //释放定位资源
         if (locationClient != null) {
             locationClient.onDestroy();
             locationClient = null;

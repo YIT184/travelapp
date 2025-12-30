@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // 高德地图隐私合规声明（必须在super.onCreate之后）
+        //高德地图隐私合规声明
         try {
             MapsInitializer.updatePrivacyShow(this, true, true);
             MapsInitializer.updatePrivacyAgree(this, true);
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
 
-        // 默认打开首页
+        //默认打开首页
         replaceFragment(new HomeFragment());
         bottomNavigation.setSelectedItemId(R.id.nav_home);
 
@@ -52,11 +52,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void jumpToPublish() {
-        // 切换到发布
-        replaceFragment(new UserFragment());
-        bottomNavigation.setSelectedItemId(R.id.nav_profile);
-    }
 
     private void replaceFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()

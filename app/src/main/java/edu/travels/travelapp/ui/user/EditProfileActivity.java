@@ -52,7 +52,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private Uri selectedImageUri;
     private String currentAvatarUrl;
-    private String currentSignature;// 当前头像的网络URL（用于显示）
+    private String currentSignature;//当前头像的网络URL（用于显示）
 
 
 
@@ -75,7 +75,7 @@ public class EditProfileActivity extends AppCompatActivity {
         initViews();
         setupToolbar();
         setupListeners();
-        loadCurrentUserInfo(); // 自动填充当前昵称和头像
+        loadCurrentUserInfo(); //自动填充当前昵称和头像
     }
 
     private void initViews() {
@@ -113,27 +113,27 @@ public class EditProfileActivity extends AppCompatActivity {
     private void loadCurrentUserInfo() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        // 获取当前昵称（如果没有则为空）
+        //获取当前昵称（如果没有则为空）
         String nickname = prefs.getString(KEY_NICKNAME, "");
         currentSignature = prefs.getString(KEY_SIGNATURE, "");
         currentAvatarUrl = prefs.getString(KEY_AVATAR_URL, "");
 
-        // 昵称填充
+        //昵称填充
         if (!TextUtils.isEmpty(nickname)) {
             etNickname.setText(nickname);
         }
 
-        // 填充个性签名
+        //填充个性签名
         if (!TextUtils.isEmpty(currentSignature)) {
             etSignature.setText(currentSignature);
         } else {
-            etSignature.setText("");  // 留空方便用户输入
+            etSignature.setText("");  //留空方便用户输入
         }
 
-        // 密码框始终留空（表示不修改密码）
+        //密码框始终留空（表示不修改密码）
         etPassword.setText("");
 
-        // 加载头像（优先网络头像，如果没有就用默认）
+        //加载头像（优先网络头像，如果没有就用默认）
         if (!TextUtils.isEmpty(currentAvatarUrl)) {
             Glide.with(this)
                     .load(currentAvatarUrl)
@@ -161,11 +161,11 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // 如果用户选择了新头像，先上传头像
+        //如果用户选择了新头像，先上传头像
         if (selectedImageUri != null) {
             uploadAvatarAndUpdate(nickname, password, signature);
         } else {
-            // 没有选择新头像，直接更新用户信息
+            //没有选择新头像，直接更新用户信息
             updateUserInfo(nickname, password, signature, null);
         }
     }
@@ -176,14 +176,14 @@ public class EditProfileActivity extends AppCompatActivity {
      */
     private void uploadAvatarAndUpdate(String nickname, String password, String signature) {
         try {
-            // 将 Uri 转换为 File
+            //将 Uri 转换为 File
             File avatarFile = copyUriToCache(selectedImageUri);
             if (avatarFile == null) {
                 Toast.makeText(this, "读取图片失败，请重试", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // 检查文件大小（10MB限制，使用图片上传接口的限制）
+            //检查文件大小（10MB限制，使用图片上传接口的限制）
             long fileSize = avatarFile.length();
             Log.d("EditProfile", "头像文件信息: 路径=" + avatarFile.getAbsolutePath() 
                 + ", 大小=" + (fileSize / 1024) + "KB, 存在=" + avatarFile.exists());
@@ -193,7 +193,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 return;
             }
 
-            // 检查文件类型
+            //检查文件类型
             String fileName = avatarFile.getName().toLowerCase();
             if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") 
                 && !fileName.endsWith(".png") && !fileName.endsWith(".gif") 
@@ -201,7 +201,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 Log.w("EditProfile", "文件类型可能不支持: " + fileName);
             }
 
-            // 创建 RequestBody
+            //创建 RequestBody
             String mimeType = "image/jpeg";
             if (fileName.endsWith(".png")) {
                 mimeType = "image/png";
@@ -217,7 +217,7 @@ public class EditProfileActivity extends AppCompatActivity {
             );
             MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", avatarFile.getName(), requestFile);
 
-            // 使用特殊标记 "avatar" 作为描述，以便在首页过滤掉头像图片
+            //使用特殊标记 "avatar" 作为描述，以便在首页过滤掉头像图片
             RequestBody description = RequestBody.create(MediaType.parse("text/plain"), "avatar");
             RequestBody gpsLat = null;
             RequestBody gpsLng = null;
@@ -226,7 +226,7 @@ public class EditProfileActivity extends AppCompatActivity {
             Log.d("EditProfile", "开始上传头像（使用图片上传接口），文件大小: " + (fileSize / 1024) + "KB, MIME类型: " + mimeType);
 
             ApiService apiService = RetrofitClient.getInstance().create(ApiService.class);
-            // 使用图片上传接口上传头像
+            //使用图片上传接口上传头像
             Call<ResultVO<String>> uploadCall = apiService.uploadImage(filePart, description, gpsLat, gpsLng, locationName);
 
             uploadCall.enqueue(new Callback<ResultVO<String>>() {
@@ -241,27 +241,27 @@ public class EditProfileActivity extends AppCompatActivity {
                             + ", msg=" + result.getMsg() + ", data=" + result.getData());
                         
                         if (result.isSuccess() && result.getData() != null) {
-                            // 图片上传成功，获取图片ID
+                            //图片上传成功，获取图片ID
                             String imageId = result.getData();
                             Log.d("EditProfile", "头像上传成功，图片ID: " + imageId);
                             
-                            // 通过图片ID获取图片URL
+                            //通过图片ID获取图片URL
                             getImageUrlByImageId(imageId, nickname, password, signature);
                         } else {
                             String errorMsg = result.getMsg() != null ? result.getMsg() : "头像上传失败";
                             
-                            // 特殊处理不同错误码
+                            //特殊处理不同错误码
                             if (result.getCode() == 401) {
                                 errorMsg = "登录已过期，请重新登录后再试";
                             } else if (result.getCode() == 400) {
-                                // 参数错误，可能是文件格式或大小问题
+                                //参数错误，可能是文件格式或大小问题
                                 if (errorMsg.contains("大小") || errorMsg.contains("size")) {
                                     errorMsg = "头像大小不符合要求，请选择小于5MB的图片";
                                 } else if (errorMsg.contains("格式") || errorMsg.contains("format")) {
                                     errorMsg = "头像格式不支持，请选择jpg、png、gif或webp格式";
                                 }
                             } else if (result.getCode() == 500) {
-                                // 服务器内部错误，可能是OSS配置问题或接口未实现
+                                //服务器内部错误，可能是OSS配置问题或接口未实现
                                 if (errorMsg.contains("bucket") || errorMsg.contains("OSS") || errorMsg.contains("存储")) {
                                     errorMsg = "服务器存储配置错误，请联系管理员";
                                 } else if (errorMsg.contains("No static resource") || errorMsg.contains("NoResourceFound")) {
@@ -281,7 +281,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 String errorBody = response.errorBody().string();
                                 Log.e("EditProfile", "错误响应体: " + errorBody);
                                 
-                                // 检查是否是路由未找到的错误
+                                //检查是否是路由未找到的错误
                                 if (errorBody.contains("No static resource") || errorBody.contains("NoResourceFound") 
                                     || errorBody.contains("auth/upload-avatar")) {
                                     errorMsg = "头像上传接口未实现\n请确认后端已实现 /api/auth/upload-avatar 接口";
@@ -366,7 +366,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 if (errorResult != null) {
                                     errorMsg = errorResult.getMsg() != null ? errorResult.getMsg() : errorMsg;
                                     
-                                    // 特殊处理常见错误
+                                    //特殊处理常见错误
                                     if (errorResult.getCode() == 401) {
                                         errorMsg = "登录已过期，请重新登录后再试";
                                     } else if (errorResult.getCode() == 500) {
@@ -378,7 +378,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                     }
                                 }
                             } catch (Exception e) {
-                                // 如果不是JSON格式，直接使用原始错误信息
+                                //如果不是JSON格式，直接使用原始错误信息
                                 if (errorBody.length() < 200) {
                                     errorMsg = errorBody;
                                 }
@@ -449,7 +449,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Log.d("EditProfile", "在第" + pageNum + "页查找图片，imageId: " + imageId);
         
         Call<edu.travels.travelapp.model.vo.ResultVO<java.util.List<edu.travels.travelapp.model.dto.ImageItemDTO>>> call = 
-            apiService.getImageList(pageNum, 50); // 每页50条
+            apiService.getImageList(pageNum, 50); //每页50条
         
         call.enqueue(new retrofit2.Callback<edu.travels.travelapp.model.vo.ResultVO<java.util.List<edu.travels.travelapp.model.dto.ImageItemDTO>>>() {
             @Override
@@ -480,14 +480,14 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
                         
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                            // 找到图片URL，更新用户信息
+                            //找到图片URL，更新用户信息
                             Log.d("EditProfile", "找到头像URL: " + avatarUrl + "，开始更新用户信息");
                             updateUserInfo(nickname, password, signature, avatarUrl);
                         } else {
-                            // 当前页没找到，根据返回的列表大小判断是否还有下一页
+                            //当前页没找到，根据返回的列表大小判断是否还有下一页
                             boolean hasMore = imageList != null && imageList.size() >= 50;
                             if (hasMore && pageNum < maxPages) {
-                                // 继续查找下一页
+                                //继续查找下一页
                                 Log.d("EditProfile", "当前页未找到，继续查找第" + (pageNum + 1) + "页");
                                 findImageUrlInPage(apiService, imageId, nickname, password, signature, pageNum + 1, maxPages);
                             } else {

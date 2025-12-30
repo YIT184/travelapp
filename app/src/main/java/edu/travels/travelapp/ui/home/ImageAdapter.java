@@ -104,7 +104,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 return;
             }
             
-            // 调试日志：打印用户信息
+            //调试日志：打印用户信息
             String userId = imageItem.getUserId() != null ? imageItem.getUserId() : "null";
             String uploaderNickname = imageItem.getUploaderNickname() != null ? imageItem.getUploaderNickname() : "null";
             String nickname = imageItem.getNickname() != null ? imageItem.getNickname() : "null";
@@ -113,20 +113,20 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             android.util.Log.d("ImageAdapter", String.format("位置[%d] 用户信息: userId=%s, uploaderNickname=%s, nickname=%s, uploaderAvatarUrl=%s, userAvatarUrl=%s", 
                 position, userId, uploaderNickname, nickname, uploaderAvatarUrl, userAvatarUrl));
             
-            // 设置用户信息 - 显示用户昵称或用户ID
+            //设置用户信息 - 显示用户昵称或用户ID
             String displayName = getDisplayName(imageItem, itemView.getContext());
             tvUsername.setText(displayName);
             android.util.Log.d("ImageAdapter", String.format("位置[%d] 最终显示名称: %s", position, displayName));
             
-            // 设置用户头像 - 如果是当前用户发布的，显示当前用户的头像
+            //设置用户头像 - 如果是当前用户发布的，显示当前用户的头像
             setUserAvatar(imageItem, itemView.getContext());
             
-            // 设置时间
+            //设置时间
             if (imageItem.getCreateTime() != null) {
                 tvCreateTime.setText(formatTime(imageItem.getCreateTime()));
             }
             
-            // 设置位置
+            //设置位置
             if (imageItem.getLocationName() != null && !imageItem.getLocationName().isEmpty()) {
                 tvLocation.setText(imageItem.getLocationName());
                 tvLocation.setVisibility(View.VISIBLE);
@@ -134,7 +134,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 tvLocation.setVisibility(View.GONE);
             }
             
-            // 设置图片 - 强制清除缓存并重新加载
+            //设置图片 - 强制清除缓存并重新加载
             if (imageItem.getImageUrl() != null && !imageItem.getImageUrl().isEmpty()) {
                 String imageUrl = imageItem.getImageUrl();
                 String imageId = imageItem.getImageId() != null ? imageItem.getImageId() : "unknown_" + position;
@@ -143,15 +143,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 
                 // 先清除ImageView的所有内容
                 ivImage.setImageDrawable(null);
-                ivImage.setTag(null); // 清除tag，防止异步加载时显示错误的图片
-                
-                // 取消之前的Glide请求
+                ivImage.setTag(null); //清除tag，防止异步加载时显示错误的图片
+
                 Glide.with(itemView.getContext()).clear(ivImage);
                 
-                // 设置tag为当前imageId，用于验证加载完成后是否还是这个图片
+                //设置tag为当前imageId，用于验证加载完成后是否还是这个图片
                 ivImage.setTag(imageId);
                 
-                // 使用Glide加载图片
+                //使用Glide加载图片
                 Glide.with(itemView.getContext())
                         .load(imageUrl)
                         .placeholder(R.drawable.default_avatar)
@@ -190,7 +189,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 ivImage.setImageResource(R.drawable.default_avatar);
             }
             
-            // 设置描述
+            //设置描述
             if (imageItem.getDescription() != null && !imageItem.getDescription().isEmpty()) {
                 tvDescription.setText(imageItem.getDescription());
                 tvDescription.setVisibility(View.VISIBLE);
@@ -198,7 +197,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 tvDescription.setVisibility(View.GONE);
             }
 
-            // 长按回调（用于管理页编辑/删除）
+            //长按回调（用于管理页编辑/删除）
             itemView.setOnLongClickListener(v -> {
                 if (listener != null) {
                     listener.onImageLongClick(imageItem);
@@ -209,7 +208,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         }
 
         private String formatTime(Date date) {
-            // 后端时间少了8小时，这里做一次 +8 小时校正（适配东八区）
+            //时间校正
             long correctedTime = date.getTime() + 8 * 60 * 60 * 1000L;
             long timeDiff = System.currentTimeMillis() - correctedTime;
             
@@ -229,7 +228,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
          * 获取显示名称：使用图片上传者的信息
          */
         private String getDisplayName(ImageItemDTO imageItem, Context context) {
-            // 优先使用 uploaderNickname（上传者昵称）
+            //优先使用 uploaderNickname（上传者昵称）
             if (imageItem.getUploaderNickname() != null && !imageItem.getUploaderNickname().trim().isEmpty()) {
                 return imageItem.getUploaderNickname();
             }

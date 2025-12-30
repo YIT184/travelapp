@@ -49,7 +49,6 @@ public class MapFragment extends Fragment implements
     private AMap aMap;
     private AMapLocationClient locationClient;
     private ImageButton btnLocation;
-    private View rootView;
 
     private static final int REQUEST_PERMISSION = 100;
     private LatLng currentLatLng;
@@ -57,7 +56,7 @@ public class MapFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // *** 添加隐私合规声明，必须在地图任何操作前调用 ***
+        //添加隐私合规声明，必须在地图任何操作前调用
         try {
             MapsInitializer.updatePrivacyShow(requireContext(), true, true);
             MapsInitializer.updatePrivacyAgree(requireContext(), true);
@@ -69,11 +68,11 @@ public class MapFragment extends Fragment implements
 
         mapView = view.findViewById(R.id.map_view);
 
-        // 搜索菜单按钮
+        //搜索菜单按钮
         FloatingActionButton btnSearchMenu = view.findViewById(R.id.btn_search_menu);
         btnSearchMenu.setOnClickListener(v -> showSearchCategoryDialog());
 
-        // 定位按钮
+        //定位按钮
         btnLocation = view.findViewById(R.id.btn_location);
         btnLocation.setOnClickListener(v -> {
             if (currentLatLng != null) {
@@ -93,10 +92,10 @@ public class MapFragment extends Fragment implements
     }
 
     private void showSearchCategoryDialog() {
-        // 创建 BottomSheetDialog
+        //创建 BottomSheetDialog
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);  // 可自定义主题透明背景
 
-        // 自定义布局：垂直列出四个按钮
+        //自定义布局：垂直列出四个按钮
         View sheetView = getLayoutInflater().inflate(R.layout.dialog_search_categories, null);
 
         sheetView.findViewById(R.id.btn_category_toilet).setOnClickListener(__ -> {
@@ -159,7 +158,7 @@ public class MapFragment extends Fragment implements
             e.printStackTrace();
             Toast.makeText(requireContext(), "调起失败，请手动打开高德地图导航", Toast.LENGTH_LONG).show();
 
-            // 直接跳转市场更新高德（不显示失败Toast循环）
+            //直接跳转市场更新高德
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.autonavi.minimap")));
             } catch (Exception ex) {}
@@ -255,14 +254,14 @@ public class MapFragment extends Fragment implements
         if (location != null && location.getErrorCode() == 0) {
             currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-            // 只在首次定位成功时自动居中并放大
+            //只在首次定位成功时自动居中并放大
             if (!hasMovedCamera) {
                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16));
                 hasMovedCamera = true;
             }
-            // 后续定位不再自动移动相机，让用户自由操作
+            //后续定位不再自动移动相机，让用户自由操作
         } else {
-            // 可选：打印详细错误，便于调试
+            //打印详细错误，便于调试
             String errText = "定位失败: " + location.getErrorCode() + " - " + location.getErrorInfo();
             Toast.makeText(requireContext(), errText, Toast.LENGTH_LONG).show();
         }
@@ -301,11 +300,11 @@ public class MapFragment extends Fragment implements
     public boolean onMarkerClick(Marker marker) {
         marker.showInfoWindow();  // 先显示信息窗
 
-        // 获取该Marker的位置和标题
+        //获取该Marker的位置和标题
         LatLng position = marker.getPosition();
         String title = marker.getTitle() != null ? marker.getTitle() : "未知地点";
 
-        // 弹出对话框，让用户选择“导航到这里”
+        //弹出对话框，让用户选择“导航到这里”
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("导航到 " + title)
                 .setMessage(marker.getSnippet())  // 显示距离等信息
@@ -315,10 +314,10 @@ public class MapFragment extends Fragment implements
                 .setNegativeButton("取消", null)
                 .show();
 
-        return true;  // 返回true表示已处理点击事件
+        return true;  //返回true表示已处理点击事件
     }
 
-    // ==================== 生命周期管理 ====================
+    //生命周期管理
     @Override public void onResume() { super.onResume(); mapView.onResume(); }
     @Override public void onPause() { super.onPause(); mapView.onPause(); }
     @Override public void onDestroy() {
