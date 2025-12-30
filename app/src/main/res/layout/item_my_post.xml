@@ -31,7 +31,7 @@
             android:text="景点标题"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="#009688"
             android:visibility="gone" />
 
         <!-- 详细描述 -->
@@ -42,7 +42,7 @@
             android:layout_marginTop="4dp"
             android:text="详细描述"
             android:textSize="14sp"
-            android:textColor="#666666"
+            android:textColor="#C1C1C1"
             android:visibility="gone" />
 
         <!-- 位置和时间 -->
@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:text="位置"
                 android:textSize="12sp"
-                android:textColor="#666666"
+                android:textColor="#8C8B8B"
                 android:drawableStart="@android:drawable/ic_menu_mylocation"
                 android:drawablePadding="4dp"
                 android:visibility="gone" />

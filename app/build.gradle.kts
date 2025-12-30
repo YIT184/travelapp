@@ -57,11 +57,11 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
-    // 高德地图 (3D地图 + 搜索)
+    //高德地图 (3D地图 + 搜索 + 定位)
     implementation("com.amap.api:3dmap:9.8.2")
     implementation("com.amap.api:search:9.7.0")
 
-    // Room 数据库
+    //Room 数据库
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")

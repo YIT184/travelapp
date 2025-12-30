@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import edu.travels.travelapp.R;
 import edu.travels.travelapp.model.dto.ImageItemDTO;
 
@@ -78,7 +79,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     }
 
     class ImageViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivUserAvatar;
+        private CircleImageView ivUserAvatar;
         private TextView tvUsername;
         private TextView tvCreateTime;
         private TextView tvLocation;
@@ -208,7 +209,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         }
 
         private String formatTime(Date date) {
-            long timeDiff = System.currentTimeMillis() - date.getTime();
+            // 后端时间少了8小时，这里做一次 +8 小时校正（适配东八区）
+            long correctedTime = date.getTime() + 8 * 60 * 60 * 1000L;
+            long timeDiff = System.currentTimeMillis() - correctedTime;
             
             if (timeDiff < 60 * 1000) {
                 return "刚刚";
@@ -217,7 +220,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             } else if (timeDiff < 24 * 60 * 60 * 1000) {
                 return (timeDiff / (60 * 60 * 1000)) + "小时前";
             } else {
-                return new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault()).format(date);
+                return new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault())
+                        .format(new Date(correctedTime));
             }
         }
         

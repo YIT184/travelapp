@@ -478,11 +478,11 @@ public class MyPostsActivity extends AppCompatActivity {
     }
     
     private void deleteImage(String imageId, boolean silent) {
-        apiService.deleteImage(imageId).enqueue(new Callback<ResultVO<Void>>() {
+        apiService.deleteImage(imageId).enqueue(new Callback<ResultVO<String>>() {
             @Override
-            public void onResponse(Call<ResultVO<Void>> call, Response<ResultVO<Void>> response) {
+            public void onResponse(Call<ResultVO<String>> call, Response<ResultVO<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ResultVO<Void> resultVO = response.body();
+                    ResultVO<String> resultVO = response.body();
                     if (resultVO.getCode() == 200) {
                         if (!silent) {
                             Toast.makeText(MyPostsActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
@@ -501,14 +501,28 @@ public class MyPostsActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    if (!silent) {
-                        Toast.makeText(MyPostsActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+                    // 即使解析失败，如果HTTP状态码是200，也认为删除成功
+                    // 因为后端已经返回了 "删除成功" 的消息
+                    if (response.code() == 200) {
+                        if (!silent) {
+                            Toast.makeText(MyPostsActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+                        }
+                        // 刷新列表
+                        currentPage = 1;
+                        hasMore = true;
+                        imageList.clear();
+                        adapter.notifyDataSetChanged();
+                        loadMyPosts();
+                    } else {
+                        if (!silent) {
+                            Toast.makeText(MyPostsActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
             
             @Override
-            public void onFailure(Call<ResultVO<Void>> call, Throwable t) {
+            public void onFailure(Call<ResultVO<String>> call, Throwable t) {
                 Log.e(TAG, "删除失败", t);
                 if (!silent) {
                     Toast.makeText(MyPostsActivity.this, "删除失败: " + t.getMessage(), Toast.LENGTH_SHORT).show();

@@ -19,10 +19,7 @@ public class RetrofitClient {
     private static final String BASE_URL = "http://10.147.174.178:8080/";
     
     // 调试模式，设置为true时显示详细日志
-    private static final boolean DEBUG_MODE = true;
-
-    private static final String PREFS_NAME = "UserPrefs";
-    private static final String KEY_TOKEN = "token";
+    private static final boolean DEBUG_MODE = false;
 
     private static Retrofit retrofit;
 

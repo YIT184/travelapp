@@ -1,7 +1,6 @@
 package edu.travels.travelapp.di;
 
 import edu.travels.travelapp.model.dto.ImageItemDTO;
-import edu.travels.travelapp.model.dto.PageResponseDTO;
 import edu.travels.travelapp.model.dto.UserLoginDTO;
 import edu.travels.travelapp.model.dto.UserRegisterDTO;
 import edu.travels.travelapp.model.dto.UserUpdateDTO;
@@ -18,7 +17,6 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 import java.util.List;
@@ -67,7 +65,7 @@ public interface ApiService {
 
     // 删除图片
     @DELETE("/api/image")
-    Call<ResultVO<Void>> deleteImage(
+    Call<ResultVO<String>> deleteImage(
             @Query("imageId") String imageId
     );
 

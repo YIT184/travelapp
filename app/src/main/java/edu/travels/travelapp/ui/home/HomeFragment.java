@@ -1,5 +1,7 @@
 package edu.travels.travelapp.ui.home;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,8 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +34,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//高德定位所需库
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+
 public class HomeFragment extends Fragment implements ImageAdapter.OnImageInteractionListener {
 
     private RecyclerView recyclerView;
@@ -42,6 +59,36 @@ public class HomeFragment extends Fragment implements ImageAdapter.OnImageIntera
     private boolean isLoading = false;
     private boolean hasMore = true;
 
+    private AMapLocationClient mLocationClient;
+    private LatLng myCurrentLocation = null; //用于存储当前经纬度
+
+    //权限请求启动器
+    private final ActivityResultLauncher<String[]> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                // 1. 获取权限结果
+                Boolean fineGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                Boolean coarseGranted = result.get(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+                // 2. 判空处理 (兼容写法)
+                boolean isFineLocation = fineGranted != null && fineGranted;
+                boolean isCoarseLocation = coarseGranted != null && coarseGranted;
+
+                // 3. 判断逻辑
+                if (isFineLocation || isCoarseLocation) {
+                    startLocation(); // 权限获取成功，开始定位
+                } else {
+                    Toast.makeText(getContext(), "无法获取位置，列表将按默认顺序显示", Toast.LENGTH_SHORT).show();
+                    loadImages(); // 即使没有权限，也加载数据
+                }
+            });
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //初始化定位客户端
+        initLocation();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,9 +97,68 @@ public class HomeFragment extends Fragment implements ImageAdapter.OnImageIntera
         initViews(view);
         setupRecyclerView();
         setupListeners();
+        checkPermissionsAndLoad();
         loadImages();
 
         return view;
+    }
+
+    // [新增] 检查权限
+    private void checkPermissionsAndLoad() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            startLocation();
+        } else {
+            locationPermissionRequest.launch(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+        }
+    }
+
+    //初始化定位配置
+    private void initLocation() {
+        try {
+            //确保合规
+            AMapLocationClient.updatePrivacyShow(requireContext(), true, true);
+            AMapLocationClient.updatePrivacyAgree(requireContext(), true);
+
+            mLocationClient = new AMapLocationClient(requireContext());
+            AMapLocationClientOption option = new AMapLocationClientOption();
+
+            //设置为高精度定位模式
+            option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            //获取一次定位结果
+            option.setOnceLocation(true);
+
+            mLocationClient.setLocationOption(option);
+            mLocationClient.setLocationListener(new AMapLocationListener() {
+                @Override
+                public void onLocationChanged(AMapLocation aMapLocation) {
+                    if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
+                        //定位成功
+                        myCurrentLocation = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                        Log.d("HomeFragment", "定位成功: " + myCurrentLocation.toString());
+                    } else {
+                        Log.e("HomeFragment", "定位失败: " + (aMapLocation != null ? aMapLocation.getErrorInfo() : "未知错误"));
+                    }
+                    //无论定位是否成功，都开始加载网络数据
+                    loadImages();
+                }
+            });
+        } catch (Exception e) {
+            Log.e("HomeFragment", "定位初始化失败", e);
+            loadImages(); // 兜底
+        }
+    }
+
+    //开始定位
+    private void startLocation() {
+        if (mLocationClient != null) {
+            mLocationClient.startLocation();
+        } else {
+            loadImages();
+        }
     }
 
     private void initViews(View view) {
@@ -138,6 +244,11 @@ public class HomeFragment extends Fragment implements ImageAdapter.OnImageIntera
                     if (resultVO.isSuccess() && resultVO.getData() != null) {
                         // 后端直接返回 List 数组
                         List<ImageItemDTO> newImages = resultVO.getData();
+
+                        //调用排序方法
+                        if (myCurrentLocation != null && newImages != null && !newImages.isEmpty()) {
+                            sortImagesByDistance(newImages);
+                        }
                         
                         // 添加调试日志：打印获取到的图片信息和用户信息
                         Log.d("HomeFragment", "获取到 " + (newImages != null ? newImages.size() : 0) + " 张图片");
@@ -165,6 +276,8 @@ public class HomeFragment extends Fragment implements ImageAdapter.OnImageIntera
                         
                         if (newImages != null && !newImages.isEmpty()) {
                             // 过滤掉头像图片（description包含"avatar"或为空的图片，忽略大小写）
+                            // 注意：如果测试数据 description 为 "avatar"，会被此逻辑过滤掉
+                            // 如需测试，请暂时注释掉下面的过滤逻辑
                             List<ImageItemDTO> filteredImages = new ArrayList<>();
                             for (ImageItemDTO item : newImages) {
                                 String description = item.getDescription();
@@ -249,6 +362,47 @@ public class HomeFragment extends Fragment implements ImageAdapter.OnImageIntera
                 }
             }
         });
+    }
+
+    //距离排序核心算法
+    private void sortImagesByDistance(List<ImageItemDTO> images) {
+        try {
+            Collections.sort(images, new Comparator<ImageItemDTO>() {
+                @Override
+                public int compare(ImageItemDTO o1, ImageItemDTO o2) {
+                    // 1. 检查是否有坐标
+                    boolean hasLoc1 = o1.getGpsLat() != null && o1.getGpsLng() != null;
+                    boolean hasLoc2 = o2.getGpsLat() != null && o2.getGpsLng() != null;
+
+                    // 2. 没坐标的放最后
+                    if (hasLoc1 && !hasLoc2) return -1; // o1 有坐标，排前面
+                    if (!hasLoc1 && hasLoc2) return 1;  // o2 有坐标，排前面
+                    if (!hasLoc1 && !hasLoc2) return 0; // 都没坐标，保持原样
+
+                    // 3. 计算距离 (使用高德自带的 AMapUtils)
+                    LatLng loc1 = new LatLng(o1.getGpsLat(), o1.getGpsLng());
+                    LatLng loc2 = new LatLng(o2.getGpsLat(), o2.getGpsLng());
+
+                    float distance1 = AMapUtils.calculateLineDistance(myCurrentLocation, loc1);
+                    float distance2 = AMapUtils.calculateLineDistance(myCurrentLocation, loc2);
+
+                    // 4. 按距离升序排列 (近的在前)
+                    return Float.compare(distance1, distance2);
+                }
+            });
+            Log.d("HomeFragment", "已按距离排序完成");
+        } catch (Exception e) {
+            Log.e("HomeFragment", "排序出错", e);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //销毁定位客户端
+        if (mLocationClient != null) {
+            mLocationClient.onDestroy();
+        }
     }
 
     private void loadMoreImages() {

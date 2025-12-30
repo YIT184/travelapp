@@ -257,7 +257,7 @@ public class UserFragment extends Fragment {
                 editor.putString("signature", existingSignature); // 保存本地已有的签名
             } else {
                 // 如果本地也没有签名，保存空字符串
-                editor.putString("signature", "");
+        editor.putString("signature", "");
             }
         }
         
@@ -273,7 +273,7 @@ public class UserFragment extends Fragment {
                 editor.putString("avatar_url", existingAvatar); // 保存本地已有的头像
             } else {
                 // 如果本地也没有头像，保存空字符串
-                editor.putString("avatar_url", "");
+        editor.putString("avatar_url", "");
             }
         }
         
@@ -309,50 +309,6 @@ public class UserFragment extends Fragment {
         Toast.makeText(getContext(), "登录成功！欢迎 " + nickname, Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * 保存登录成功后的基本信息（不清空头像和签名）
-     * 用于登录接口没有返回头像/签名时，保留本地缓存的数据
-     * @param token 用户token
-     * @param nickname 用户昵称
-     * @param userId 用户ID
-     */
-    private void saveLoginSuccessWithoutClearing(String token, String nickname, String userId) {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("token", token);
-        editor.putString("nickname", nickname);
-        // 关键：不清空 signature 和 avatar_url，保留本地缓存的值
-        if (userId != null) {
-            editor.putString(KEY_USER_ID, userId);
-        }
-        editor.apply();
-
-        // 更新UI显示
-        tvNickname.setText(nickname);
-        
-        // 从本地缓存读取签名和头像
-        String signature = sp.getString(KEY_SIGNATURE, "");
-        if (!TextUtils.isEmpty(signature)) {
-            tvSignature.setText(signature);
-        } else {
-            tvSignature.setText("这个人很懒，没有留下个性签名");
-        }
-        
-        // 显示头像（从本地缓存读取）
-        ImageView ivAvatar = getView() != null ? getView().findViewById(R.id.iv_avatar) : null;
-        if (ivAvatar != null) {
-            String avatarUrl = sp.getString(KEY_AVATAR_URL, "");
-            if (!TextUtils.isEmpty(avatarUrl)) {
-                Glide.with(this).load(avatarUrl).into(ivAvatar);
-            } else {
-                ivAvatar.setImageResource(R.drawable.default_avatar);
-            }
-        }
-
-        layoutLogin.setVisibility(View.GONE);
-        layoutProfile.setVisibility(View.VISIBLE);
-
-        Toast.makeText(getContext(), "登录成功！欢迎 " + nickname, Toast.LENGTH_LONG).show();
-    }
 
     private void checkLoginStatus(View view) {
         String token = sp.getString(KEY_TOKEN, null);

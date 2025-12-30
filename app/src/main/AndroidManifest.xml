@@ -15,7 +15,7 @@
         <!-- 高德地图 -->
         <package android:name="com.autonavi.minimap" />
 
-        <!-- 如果你还会用 Intent Scheme -->
+        <!-- Intent Scheme -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="androidamap" />
@@ -32,6 +32,9 @@
         tools:ignore="MissingClass"
         android:allowNativeHeapPointerTagging="false">
 
+
+        <!-- 高德定位 -->
+        <service android:name="com.amap.api.location.APSService" />
         <!-- 高德 Key -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
