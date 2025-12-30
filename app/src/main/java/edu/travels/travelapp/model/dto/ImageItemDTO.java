@@ -1,12 +1,23 @@
 package edu.travels.travelapp.model.dto;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 
 public class ImageItemDTO {
     private String imageId;
     private String userId;
-    private String nickname;  // 用户昵称
-    private String userAvatarUrl;  // 用户头像URL
+    
+    @SerializedName(value = "nickname", alternate = {"nickName", "userNickname", "userNickName"})
+    private String nickname;  // 用户昵称（兼容旧字段）
+    
+    @SerializedName(value = "uploaderNickname", alternate = {"uploaderNickName", "uploader_name"})
+    private String uploaderNickname;  // 上传者昵称
+    
+    @SerializedName(value = "uploaderAvatarUrl", alternate = {"uploaderAvatar", "uploader_avatar"})
+    private String uploaderAvatarUrl;  // 上传者头像URL
+    
+    @SerializedName(value = "userAvatarUrl", alternate = {"avatarUrl", "userAvatar", "avatar"})
+    private String userAvatarUrl;  // 用户头像URL（兼容旧字段）
     private String imageUrl;
     private String description;
     private Double gpsLat;
@@ -42,6 +53,22 @@ public class ImageItemDTO {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getUploaderNickname() {
+        return uploaderNickname;
+    }
+
+    public void setUploaderNickname(String uploaderNickname) {
+        this.uploaderNickname = uploaderNickname;
+    }
+
+    public String getUploaderAvatarUrl() {
+        return uploaderAvatarUrl;
+    }
+
+    public void setUploaderAvatarUrl(String uploaderAvatarUrl) {
+        this.uploaderAvatarUrl = uploaderAvatarUrl;
     }
 
     public String getUserAvatarUrl() {

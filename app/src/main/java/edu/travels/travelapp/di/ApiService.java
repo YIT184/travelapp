@@ -59,7 +59,7 @@ public interface ApiService {
     // 更新图片信息（描述、位置）
     @FormUrlEncoded
     @PUT("/api/image")
-    Call<ResultVO<Void>> updateImage(
+    Call<ResultVO<String>> updateImage(
             @Query("imageId") String imageId,
             @Field("description") String description,
             @Field("locationName") String locationName

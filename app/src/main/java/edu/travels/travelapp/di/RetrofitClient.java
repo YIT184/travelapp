@@ -11,18 +11,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "http://10.117.64.183:8080/";
+    private static final String BASE_URL = "http://10.147.174.178:8080/";
     
     // 调试模式，设置为true时显示详细日志
     private static final boolean DEBUG_MODE = true;
@@ -62,7 +56,7 @@ public class RetrofitClient {
                         
                         // 根据接口路径选择不同的token传递方式
                         String url = original.url().toString();
-                        if (url.contains("/auth/update-user-info") || url.contains("/auth/upload-avatar")) {
+                        if (url.contains("/auth/update-user-info") || url.contains("/auth/upload-avatar") || url.contains("/auth/user-info")) {
                             // 使用Authorization头
                             if (token != null) {
                                 builder.header("Authorization", "Bearer " + token);

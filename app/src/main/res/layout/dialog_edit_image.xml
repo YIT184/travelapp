@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- 图片显示和选择 -->
+    <ImageView
+        android:id="@+id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_avatar"
+        android:background="#F5F5F5"
+        android:contentDescription="文章图片"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:text="点击图片可更换"
+        android:textSize="12sp"
+        android:textColor="#999999" />
+
+    <!-- 景点标题 -->
+    <EditText
+        android:id="@+id/et_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="景点标题 *"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:background="@android:drawable/edit_text" />
+
+    <!-- 详细描述 -->
+    <EditText
+        android:id="@+id/et_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="详细描述"
+        android:maxLines="5"
+        android:minHeight="100dp"
+        android:gravity="top|start"
+        android:padding="8dp"
+        android:background="@android:drawable/edit_text" />
+
+    <!-- 位置 -->
+    <EditText
+        android:id="@+id/et_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="位置(可选)"
+        android:padding="8dp"
+        android:background="@android:drawable/edit_text" />
+
+</LinearLayout>
+
+
+
+
+
