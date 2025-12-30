@@ -169,6 +169,9 @@ TravelApp 是一款专为旅行爱好者设计的移动应用，用户可以在�
 3. **网络连接**：部分功能需要网络连接才能正常使用
 4. **存储权限**：发布功能需要存储权限来选择图片
 
+## 许可证
+
+MIT License
 
 ## 贡献
 
@@ -177,8 +180,8 @@ TravelApp 是一款专为旅行爱好者设计的移动应用，用户可以在�
 ## 联系方式
 
 如有问题或建议，欢迎联系：
-- 邮箱：3620971624@qq.com
-- GitHub：https://github.com/YIT184
+- 邮箱：your-email@example.com
+- GitHub：https://github.com/your-username
 
 ---
 
