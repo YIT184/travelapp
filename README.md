@@ -78,7 +78,7 @@ TravelApp 是一款专为旅行爱好者设计的移动应用，用户可以在�
 
 1. **克隆项目**
    ```bash
-   git clone https://github.com/your-username/travelapp.git
+   https://github.com/YIT184/travelapp.git
    ```
 
 2. **打开项目**
