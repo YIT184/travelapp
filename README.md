@@ -1,4 +1,4 @@
-# TravelApp - 旅行应用
+# Traveltrace- 旅途循迹
 
 一个基于Android平台的旅行分享应用，提供地图导航、旅行分享和用户中心等功能。
 
