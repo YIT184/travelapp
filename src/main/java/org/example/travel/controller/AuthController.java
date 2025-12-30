@@ -54,9 +54,23 @@ public class AuthController {
             @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody UserUpdateDTO updateDTO) {
         String token = authHeader.substring(7);
-        String phone = jwtUtil.extractPhone(token); // 兼容旧逻辑
-        User user = userService.getUserByPhone(phone);
-        userService.updateUserInfo(user.getUserId(), updateDTO);
+        String userId = jwtUtil.extractUserId(token);
+        userService.updateUserInfo(userId, updateDTO);
         return ResultVO.success();
+    }
+    /**
+     * 获取用户信息接口
+     */
+    @GetMapping("/user-info")
+    public ResultVO<User> getUserInfo(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String userId = jwtUtil.extractUserId(token);
+        User user = userService.getById(userId);
+        if (user == null) {
+            return ResultVO.error(404, "用户不存在");
+        }
+        // 隐藏密码等敏感信息
+        user.setPassword(null);
+        return ResultVO.success(user);
     }
 }

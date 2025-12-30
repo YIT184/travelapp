@@ -21,7 +21,9 @@ public interface ImageMapper {
     @Delete("DELETE FROM travel_image WHERE image_id = #{imageId}")
     void deleteById(String imageId);
     // 新增分页查询方法
-    @Select("SELECT * FROM travel_image ORDER BY create_time DESC LIMIT #{offset}, #{size}")
+    @Select("SELECT ti.*, u.nickname as uploader_nickname, u.avatar_url as uploader_avatar_url " +
+            "FROM travel_image ti " +
+            "LEFT JOIN user u ON ti.user_id = u.user_id " +
+            "ORDER BY ti.create_time DESC LIMIT #{offset}, #{size}")
     List<TravelImage> selectImageList(@Param("offset") int offset, @Param("size") int size);
-
 }

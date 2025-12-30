@@ -25,12 +25,7 @@ server:
     context-path: /api
 
 # 阿里云OSS配置（修改后）
-aliyun:
-  oss:
-    endpoint: oss-cn-chengdu.aliyuncs.com  # 西南1（成都）地域固定endpoint
-    accessKeyId:   # 你的真实AccessKeyId
-    accessKeySecret:  # 你的真实AccessKeySecret
-    bucketName: travel-trace-2024
+
 
 # JWT??
 jwt:

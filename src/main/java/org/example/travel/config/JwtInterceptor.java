@@ -34,7 +34,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         try {
             // 3. 验证token是否过期（解析成功则未过期）
-            jwtUtil.extractPhone(token);
+            jwtUtil.extractUserId(token);
         } catch (Exception e) {
             log.error("token验证失败：", e);
             throw new BusinessException(401, "登录已过期，请重新登录");

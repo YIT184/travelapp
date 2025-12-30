@@ -14,4 +14,7 @@ public class TravelImage {
     private Double gpsLng;
     private String locationName;
     private Date createTime;
+    //DTO
+    private String uploaderNickname;
+    private String uploaderAvatarUrl;
 }

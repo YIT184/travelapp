@@ -24,4 +24,5 @@ public interface UserService {
 
     // 根据用户ID查询用户（新增方法）
     User getById(String userId);
+
 }

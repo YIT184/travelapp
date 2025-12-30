@@ -1,6 +1,6 @@
 package org.example.travel.service.impl;
 
-import java.util.Arrays;  // 添加此导入语句
+import java.util.Arrays;
 import java.util.List;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
@@ -8,17 +8,16 @@ import com.aliyun.oss.model.PutObjectRequest;
 import org.example.travel.model.entity.TravelImage;
 import org.example.travel.mapper.ImageMapper;
 import org.example.travel.exception.BusinessException;
-import org.example.travel.service.ImageService; // 1. 新增：导入接口
+import org.example.travel.service.ImageService;
+import org.example.travel.service.UserService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
+
 
 /**
  * 图片服务层：负责图片上传OSS、数据入库、列表查询、点赞数更新等逻辑
@@ -44,6 +43,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Resource
     private ImageMapper imageMapper;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 上传图片到阿里云OSS
@@ -150,8 +152,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<TravelImage> getImageList(Integer page, Integer size) {
-        // 计算分页偏移量
         int offset = (page - 1) * size;
         return imageMapper.selectImageList(offset, size);
     }
+
+
 }
