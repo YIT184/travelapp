@@ -137,8 +137,8 @@ public class ImageServiceImpl implements ImageService {
 
         // 验证文件大小，这里限制10MB
         long fileSize = file.getSize();
-        if (fileSize > 10 * 1024 * 1024) {
-            throw new BusinessException("图片大小不能超过10MB");
+        if (fileSize > 100 * 1024 * 1024) {
+            throw new BusinessException("图片大小不能超过100MB");
         }
 
         // 验证文件类型
